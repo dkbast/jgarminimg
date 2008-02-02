@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="build" name="GarminImg">
+    <property name="release.version" value="1.1"/>
+    <property environment="env"/>
+    <property name="release.output.path" value="${env.HOME}"/>
+    <property name="junit.path" value="lib/junit-4.1.jar"/>
+    <property name="batik.awt.util.path" value="lib/batik-awt-util.jar"/>
+    <property name="batik.dom.path" value="lib/batik-dom.jar"/>
+    <property name="batik.svggen.path" value="lib/batik-svggen.jar"/>
+    <property name="batik.util.path" value="lib/batik-util.jar"/>
+    <property name="batik.xml.path" value="lib/batik-xml.jar"/>
+    <property name="itext.path" value="lib/itext-1.4.8.jar"/>
+    <property name="postgres.path" value="lib/postgresql.jar"/>
+    <property name="postgis.path" value="lib/postgis.jar"/>
+
+    <path id="project.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="${junit.path}"/>
+        <pathelement location="${batik.awt.util.path}"/>
+        <pathelement location="${batik.dom.path}"/>
+        <pathelement location="${batik.svggen.path}"/>
+        <pathelement location="${batik.util.path}"/>
+        <pathelement location="${batik.xml.path}"/>
+        <pathelement location="${itext.path}"/>
+        <pathelement location="${postgres.path}"/>
+        <pathelement location="${postgis.path}"/>
+    </path>
+
+    <target name="init">
+        <mkdir dir="bin"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="bin"/>
+        <delete dir="tmp"/>
+        <delete dir="web/doc"/>
+    </target>
+
+    <target name="build" depends="init">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac destdir="bin">
+            <src path="src/main/java"/>
+            <classpath refid="project.classpath"/>
+        </javac>
+        <copy todir="bin/">
+            <fileset dir="src/main/resources" includes="**/*.png"/>
+        </copy>
+    </target>
+
+    <target name="SampleApp" depends="build">
+        <java classname="org.free.garminimg.swing.SampleApp" failonerror="true" fork="yes">
+            <classpath refid="project.classpath"/>
+            <!--<jvmarg value="-Dsun.java2d.opengl=True"/>-->
+            <jvmarg value="-server"/>
+            <jvmarg value="-Xmx192m"/>
+        </java>
+    </target>
+
+    <target name="create.tar.gz">
+        <tar basedir=".." includes="GarminImg/src/**/*.java GarminImg/src/**/*.png GarminImg/*.xml GarminImg/README GarminImg/lib/*.jar" tarfile="${release.output.path}/GarminImg-${release.version}.tar.gz" compression="gzip"/>
+    </target>
+
+    <target name="garminimg.jar" depends="build">
+        <mkdir dir="tmp"/>
+        <jar basedir="bin" includes="**/*.class **/*.png" jarfile="tmp/garminimg.jar"/>
+    </target>
+
+    <target name="tmp.copy.libs">
+        <mkdir dir="tmp"/>
+        <copy file="${batik.awt.util.path}" todir="tmp/"/>
+        <copy file="${batik.dom.path}" todir="tmp/"/>
+        <copy file="${batik.svggen.path}" todir="tmp/"/>
+        <copy file="${batik.util.path}" todir="tmp/"/>
+        <copy file="${batik.xml.path}" todir="tmp/"/>
+        <copy file="${itext.path}" todir="tmp/"/>
+        <copy file="${postgres.path}" todir="tmp/"/>
+        <copy file="${postgis.path}" todir="tmp/"/>
+    </target>
+
+    <target name="sign.jars" depends="garminimg.jar,tmp.copy.libs">
+        <signjar storetype="jks" storepass="tototo" keystore="KEYSTORE" alias="jgarminimg.sourceforge.net">
+            <fileset dir="tmp">
+                <include name="*.jar"/>
+            </fileset>
+        </signjar>
+    </target>
+
+    <target name="javadoc">
+        <delete dir="web/doc"/>
+        <mkdir dir="web/doc"/>
+        <javadoc sourcepath="src" packagenames="org.free.garminimg.*" destdir="web/doc/" public="true"></javadoc>
+    </target>
+
+    <target name="prepare.web" depends="sign.jars,javadoc"/>
+
+    <target name="copy.web" depends="prepare.web">
+        <path id="web.paths">
+            <fileset dir="web">
+                <include name="*.jnlp"/>
+                <include name="*.html"/>
+                <include name="*.css"/>
+                <include name="*.js"/>
+            </fileset>
+            <path location="web/doc"/>
+            <path location="web/images"/>
+            <fileset dir="tmp">
+                <include name="*.jar"/>
+            </fileset>
+        </path>
+        <pathconvert pathsep=" " property="web.files" refid="web.paths"/>
+        <exec executable="scp" failonerror="true">
+            <arg value="-r"/>
+            <arg line="${web.files}"/>
+            <arg value="pvalsecc@jgarmingimg.sf.net:/home/groups/j/jg/jgarminimg/htdocs/"/>
+        </exec>
+    </target>
+</project>

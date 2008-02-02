@@ -1,0 +1,50 @@
+For the moment, this library has been tested with:
+  - Swiss Topo 50 maps
+  - Maps generated with sdts2mp (http://mapcenter.cgpsmapper.com)
+  - European metro guide V7 and V8.
+  - City Navigator non-NT V9
+  - Worldmap 4.06
+
+Maps that I know doesn't work:
+  - City Nav North America v8 cannot deal with the file structure
+  - NT maps, the compressed maps are not supported
+
+To build, you'll need an installed j2sdk1.5 (or 6) and Maven. Then,
+you can run:
+  $ mvn compile
+  
+To run the sample application:
+  $ mvn compile exec:java
+
+
+SampleApp "user manual"
+=======================
+
+You can open a single .img file or a whole directory containing .img files.
+For example, with "European metro guide, you can copy every .img files you
+find in mgeurop7, the MGEuro7.img (base map) and the MGEuro7.tdb (product
+info) in a single directory and open this directory with SampleApp.
+
+To zoom in/out, use the mouse wheel and to move around, drag with the left
+button (actualy done only when the button is released).
+
+To get some info about something on the map, right click on it without
+moving the mouse.
+
+You can export the map to PNG, SVG and PDF with File->Export. Choose the
+target file and the format. Then, use the left map to choose the zone to
+export. You can see a preview of the output quality (depends on the
+resolution for PDF and the dimension for PNG and SVG) on the right map.
+
+See http://sourceforge.net/projects/jgarminimg/ for the latest version and
+more info. For the latest version use CVS.
+
+
+Warning
+=======
+
+In some country, this software may be illegal. For example, in the USA,
+this may fall under the DMCA because some heavy cryptographic algorithm
+have been cracked in ImgFileInputStream. So watch your back if you don't
+live in a "free" country.
+

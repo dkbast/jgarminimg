@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+
+	terrafirma1.0 by nodethirtythree design
+	http://www.nodethirtythree.com
+
+-->
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=iso-8859-1"/>
+    <title>JGarminImgParser</title>
+    <meta name="keywords" content=""/>
+    <meta name="description" content=""/>
+    <link rel="stylesheet" type="text/css" href="default.css"/>
+</head>
+<body>
+
+<div id="outer">
+
+<div id="upbg"></div>
+
+<div id="inner">
+
+<div id="header">
+    <h1><span>JGarminImgParser</span></h1>
+
+    <h2>Garmin maps for Java</h2>
+</div>
+
+<div id="splash"></div>
+
+<div id="menu">
+    <ul>
+        <li class="first"><a href="index.html">Home</a></li>
+        <li><a href="core.html">Core library</a></li>
+        <li><a href="swing.html">Swing usage</a></li>
+        <li><a href="optimization.html">Optimization</a></li>
+        <li><a href="screenshots.html">Screenshots</a></li>
+        <li><a href="doc/index.html">JavaDoc</a></li>
+        <li><a href="http://sourceforge.net/projects/jgarminimg/">Source Forge page</a></li>
+    </ul>
+</div>
+
+<!--<div id="date">August 1, 2006</div>
+        </div>-->
+
+
+<div id="primarycontent">
+
+    <!-- primary content start -->
+
+    <div class="post">
+        <div class="header">
+            <h3>Core library usage</h3>
+        </div>
+        <div class="content">
+            <p>The main entry point is the <a class="code"
+                                              href="doc/org/free/garminimg/ImgFilesBag.html">ImgFilesBag</a> class. You
+                basically instanciate it and add some IMG files in it:</p>
+                    <pre>
+    ImgFilesBag maps=new ImgFilesBag();
+    File file=new File("/home/patrick/gps/maps/00000002.img");
+    maps.addFile(file);
+                    </pre>
+
+            <p>Or else, you can add a whole directory in it:</p>
+                    <pre>
+    maps.addDirectory(new File("/home/patrick/gps/maps"));
+                    </pre>
+
+            <p>The directory must contain at the same level a set of IMG files and, optionally a PDB file. The presence
+                of the PDB file will speed-up the initial reading since this file contains an index of the IMG
+                files.</p>
+
+            <p>Then to read the content of the map, you have to create a listener that will receive the different
+                objects the map is composed of:</p>
+                    <pre>
+    public static class TestListener implements MapListener
+    {
+        public void addPoint(int type, int subType, int longitude, int latitude,
+                             Label label, boolean indexed)
+        {
+            ... your code here ...
+        }
+
+        public void addPoly(int type, int[] longitudes, int[] latitudes,
+                            int nbPoints, Label label, boolean line)
+        {
+            ... your code here ...
+        }
+
+        public void startMap(ImgFileBag file)
+        {
+            ... your code here ...
+        }
+
+        public void startSubDivision(SubDivision subDivision)
+        {
+            ... your code here ...
+        }
+
+        public void finishPainting()
+        {
+            ... your code here ...
+        }
+    }
+                    </pre>
+            <p>Finally, you call one of the following:
+                    <pre>
+    //for having the objects read as fast as possible
+    map.read(minLon, maxLon, minLat, maxLat, resolution, ObjectKind.ALL, null, listener);
+
+    //for having the objects in an order suitable for drawing
+    maps.readMapForDrawing(minLon, maxLon, minLat, maxLat, resolution, ObjectKind.ALL, listener);
+                    </pre>
+
+            <p>From here, you can do whatever you want with the data. If you want to display it in a Swing application,
+                see <a href="swing.html">this page</a>.</p>
+        </div>
+    </div>
+
+    <!-- primary content end -->
+
+</div>
+
+<div id="secondarycontent">
+    <h3>Thanks</h3>
+
+    <div class="content">
+        <p>Thanks goes to:</p>
+        <ul>
+            <li>
+                <a href="http://sourceforge.net/projects/garmin-img/">Mechalas</a> for his nice document.
+            </li>
+            <li>
+                <a href="http://www.jetbrains.com/idea/">IntelliJ</a> for their good Java IDE.
+            </li>
+            <li>
+                <a href="http://www.nodethirtythree.com/">NodeThirtyThree</a> for the template of this page.
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div id="footer">
+    &copy;<a href="http://www.thus.ch/~patrick">Patrick Valsecchi</a>.
+</div>
+
+</div>
+
+</div>
+
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">_uacct="UA-2624736-6";
+urchinTracker();</script>
+</body>
+</html>
