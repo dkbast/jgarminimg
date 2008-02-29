@@ -25,13 +25,12 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class MapExporter implements MapListener
-{
+public class MapExporter implements MapListener {
     private final Connection conn;
 
-    private ImgFileBag curFile=null;
+    private ImgFileBag curFile = null;
 
-    private int curLevel=-1;
+    private int curLevel = -1;
 
     private PointSaver pointSaver;
 
@@ -39,35 +38,31 @@ public class MapExporter implements MapListener
 
     private PolygonSaver polygonSaver;
 
-    private int nbPoints=0;
+    private int nbPoints = 0;
 
-    private int nbPolylines=0;
+    private int nbPolylines = 0;
 
-    private int nbPolygons=0;
+    private int nbPolygons = 0;
 
-    public MapExporter(Connection conn) throws SQLException
-    {
-        this.conn=conn;
+    public MapExporter(Connection conn) throws SQLException {
+        this.conn = conn;
 
-        pointSaver=new PointSaver(this);
+        pointSaver = new PointSaver(this);
         pointSaver.init(conn);
 
-        /*polylineSaver=new PolylineSaver(this);
+        polylineSaver = new PolylineSaver(this);
         polylineSaver.init(conn);
 
-        polygonSaver=new PolygonSaver(this);
-        polygonSaver.init(conn);*/
+        polygonSaver = new PolygonSaver(this);
+        polygonSaver.init(conn);
     }
 
-    public void exportMaps(ImgFilesBag maps)
-    {
-        int coord=(1<<24);
-        try
-        {
-            maps.readMap(-coord, coord, -coord, coord, -1, ObjectKind.INDEXED_POINT|ObjectKind.POINT, null, this);
+    public void exportMaps(ImgFilesBag maps) {
+        int coord = (1 << 24);
+        try {
+            maps.readMap(-coord, coord, -coord, coord, -1, ObjectKind.INDEXED_POINT | ObjectKind.POINT, null, this);
         }
-        catch(IOException e)
-        {
+        catch (IOException e) {
             System.err.println("Error while reading the maps:");
             e.printStackTrace();
             System.exit(-1);
@@ -75,48 +70,39 @@ public class MapExporter implements MapListener
 
         commit();
 
-        System.out.println("Saved nbPoints="+nbPoints+" nbPolygons="+nbPolygons+" nbPolylines="+nbPolylines);
+        System.out.println("Saved nbPoints=" + nbPoints + " nbPolygons=" + nbPolygons + " nbPolylines=" + nbPolylines);
     }
 
-    private void commit()
-    {
-        try
-        {
-            if(pointSaver!=null) pointSaver.finish();
-            if(polylineSaver!=null) polylineSaver.finish();
-            if(polygonSaver!=null) polygonSaver.finish();
+    private void commit() {
+        try {
+            if (pointSaver != null) pointSaver.finish();
+            if (polylineSaver != null) polylineSaver.finish();
+            if (polygonSaver != null) polygonSaver.finish();
             conn.commit();
         }
-        catch(SQLException e)
-        {
+        catch (SQLException e) {
             System.err.println("Error while committing the DB:");
             e.printStackTrace();
             System.exit(-1);
         }
     }
 
-    public void addPoint(int type, int subType, int longitude, int latitude, Label label, boolean indexed)
-    {
-        if(pointSaver!=null)
-        {
+    public void addPoint(int type, int subType, int longitude, int latitude, Label label, boolean indexed) {
+        if (pointSaver != null) {
             pointSaver.addPoint(type, subType, longitude, latitude, label);
             nbPoints++;
         }
     }
 
-    public void addPoly(int type, int[] longitudes, int[] latitudes, int nbPoints, Label label, boolean line)
-    {
-        if(line)
-        {
-            if(nbPoints>=2 && polylineSaver!=null)   //don't want to insert invalid polylines...
+    public void addPoly(int type, int[] longitudes, int[] latitudes, int nbPoints, Label label, boolean line) {
+        if (line) {
+            if (nbPoints >= 2 && polylineSaver != null)   //don't want to insert invalid polylines...
             {
                 polylineSaver.addLine(type, longitudes, latitudes, nbPoints, label);
                 nbPolylines++;
             }
-        }
-        else
-        {
-            if(nbPoints>=3 && polygonSaver!=null)   //don't want to insert invalid polygons...
+        } else {
+            if (nbPoints >= 3 && polygonSaver != null)   //don't want to insert invalid polygons...
             {
                 polygonSaver.addLine(type, longitudes, latitudes, nbPoints, label);
                 nbPolygons++;
@@ -124,28 +110,23 @@ public class MapExporter implements MapListener
         }
     }
 
-    public void startMap(ImgFileBag file)
-    {
+    public void startMap(ImgFileBag file) {
         //commit();
-        curFile=file;
+        curFile = file;
     }
 
-    public void startSubDivision(SubDivision subDivision)
-    {
-        curLevel=subDivision.getLevel();
+    public void startSubDivision(SubDivision subDivision) {
+        curLevel = subDivision.getLevel();
     }
 
-    public void finishPainting()
-    {
+    public void finishPainting() {
     }
 
-    public ImgFileBag getCurFile()
-    {
+    public ImgFileBag getCurFile() {
         return curFile;
     }
 
-    public int getCurLevel()
-    {
+    public int getCurLevel() {
         return curLevel;
     }
 }
