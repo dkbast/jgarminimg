@@ -21,6 +21,10 @@ package org.free.garminimg.export;
 
 import org.free.garminimg.ImgFilesBag;
 import org.postgis.PGgeometry;
+import org.pvalsecc.opts.Option;
+import org.pvalsecc.opts.GetOptions;
+import org.pvalsecc.opts.InvalidOption;
+import org.pvalsecc.jdbc.ConnectionFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,47 +32,17 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class PostgisExporter
+public class PostgisExporter extends BaseExporter
 {
-    public static Connection getConnection()
-    {
-        String dbConnection=System.getProperty("db");
-        if(dbConnection==null)
-        {
-            help("Missing 'db' property.");
-        }
+    @Option(desc="Map file(s) location", mandatory = true)
+    private String mapLocation=null;
 
-        Connection conn;
-        try
-        {
-            Class.forName("org.postgresql.Driver");
-            conn=DriverManager.getConnection(dbConnection, System.getProperty("dbUser"), System.getProperty("dbPassword"));
-            ((org.postgresql.PGConnection)conn).addDataType("geometry", PGgeometry.class);
-            conn.setAutoCommit(false);
-        }
-        catch(SQLException e)
-        {
-            e.printStackTrace();
-            System.exit(-1);
-            return null;
-        }
-        catch(ClassNotFoundException e)
-        {
-            e.printStackTrace();
-            System.exit(-1);
-            return null;
-        }
-        return conn;
+    public PostgisExporter(String[] argv) throws IllegalAccessException {
+        getOptions(argv);
     }
 
-    public static void main(String[] args)
+    public void run()
     {
-        String mapLocation=System.getProperty("map");
-        if(mapLocation==null)
-        {
-            help("Missing 'map' property.");
-        }
-
         Connection conn=getConnection();
 
         try
@@ -100,25 +74,8 @@ public class PostgisExporter
         }
     }
 
-    private static void help(String message)
-    {
-        if(message!=null)
-        {
-            System.out.println(message);
-            System.out.println();
-        }
-
-        System.out.println("Garmin IMG file(s) exporter for PostGIS database.");
-        System.out.println();
-        System.out.println("Usage:");
-        System.out.println("  java ... -Dmap={location} PostgisExporter");
-        System.out.println();
-        System.out.println("Properties:");
-        System.out.println("  map={location}      IMG file or directory to export");
-        System.out.println("  db={name}              name of the Postgres DB to connect");
-        System.out.println("  dbUser={user}          username");
-        System.out.println("  dbPassword={password}  password");
-
-        System.exit(-1);
+    public static void main(String[] args) throws IllegalAccessException {
+        PostgisExporter exporter=new PostgisExporter(args);
+        exporter.run();
     }
 }

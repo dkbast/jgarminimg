@@ -10,6 +10,18 @@ create sequence POLYGON_SERIAL;
 create table POLYGON (ID integer primary key default nextval('POLYGON_SERIAL'), MAP integer not null, LEVEL integer not null, TYPE integer not null, NAME text);
 select AddGeometryColumn('polygon', 'contour', (select srid from spatial_ref_sys where srtext like 'GEOGCS["WGS 84%'), 'POLYGON', 2 );
 
+create table POI_TYPE (TYPE integer NOT NULL, SUB_TYPE integer, DESCRIPTION text NOT NULL, ICON text, PRIMARY KEY (TYPE, SUB_TYPE));
+
+create view poi_full as
+  select poi.*, poi_type.description, poi_type.icon
+    from poi
+    inner join poi_type on poi.type=poi_type.type and poi.sub_type=poi_type.sub_type;
+insert into geometry_columns
+    (f_table_catalog, f_table_schema, f_table_name, f_geometry_column, coord_dimension, srid, type)
+  values
+    ('', 'public', 'poi_full', 'position', 2, 4326, 'POINT');
+
+
 # after insertion of the data =========================
 
 update polygon set contour=st_buffer(contour, 0.0) where not st_issimple(contour);

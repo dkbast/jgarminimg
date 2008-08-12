@@ -61,6 +61,7 @@ public class MapExporter implements MapListener {
         int coord = (1 << 24);
         try {
             maps.readMap(-coord, coord, -coord, coord, -1, ObjectKind.INDEXED_POINT | ObjectKind.POINT, null, this);
+            //maps.readMap(-coord, coord, -coord, coord, -1, ObjectKind.ALL, null, this);
         }
         catch (IOException e) {
             System.err.println("Error while reading the maps:");
