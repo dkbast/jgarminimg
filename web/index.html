@@ -37,7 +37,7 @@
                 <li><a href="optimization.html">Optimization</a></li>
                 <li><a href="screenshots.html">Screenshots</a></li>
                 <li><a href="doc/index.html">JavaDoc</a></li>
-                <li><a href="http://sourceforge.net/projects/jgarminimg/">Source Forge page</a></li>
+                <li><a href="http://sourceforge.net/projects/jgarminimg/">Source Forge</a></li>
             </ul>
         </div>
 
@@ -68,6 +68,29 @@
                             href="http://sourceforge.net/project/showfiles.php?group_id=183630&package_id=213300">SourceForge</a>
                         page. But if you just want to play with the Swing sample application, use this <a
                             href="GarminImgSampleApp.jnlp">link</a> (WebStart)</p>
+
+                    <p>To include it in a Maven2 project, add that to your pom.xml file:
+                        <pre>
+    ...
+    &lt;dependencies&gt;
+        ...
+        <b>&lt;dependency&gt;
+            &lt;groupId&gt;ch.thus&lt;/groupId&gt;
+            &lt;artifactId&gt;jgarminimg&lt;/artifactId&gt;
+            &lt;version&gt;1.2&lt;/version&gt;
+        &lt;/dependency&gt;</b>
+    &lt;/dependencies&gt;
+    &lt;repositories&gt;
+        <b>&lt;repository&gt;
+            &lt;id&gt;thus.ch&lt;/id&gt;
+            &lt;name&gt;Patrick Valsecchi's repository&lt;/name&gt;
+            &lt;url&gt;http://www.thus.ch/~patrick/maven&lt;/url&gt;
+        &lt;/repository&gt;</b>
+        ...
+    &lt;/repositories&gt;
+    ...
+                        </pre>
+                    </p>
                 </div>
                 <!--<div class="footer">
                     </div>-->
