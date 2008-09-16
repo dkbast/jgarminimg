@@ -74,7 +74,7 @@ insert into junction_polyline (start_id, end_id, polyline_id, length)
         from polyline p, junction j1, junction j2 
         where p.path&&j1.position and
               p.path&&j2.position and
-              p.level=0 and (p.type<=12 or p.type=22 or (p.type>=256 and p.type<=268) or p.type=278)
+              p.level=0 and (p.type<=12 or p.type=22 or (p.type>=256 and p.type<=268) or p.type=278) and
               st_startpoint(p.path)=j1.position and
               st_pointn(path, st_numpoints(path))=j2.position;
                             
