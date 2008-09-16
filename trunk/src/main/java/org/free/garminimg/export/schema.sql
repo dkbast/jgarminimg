@@ -86,6 +86,11 @@ update junction_polyline set time=length/(80/3.6) where polyline_id in (select i
 update junction_polyline set time=length/(80/3.6) where polyline_id in (select id from polyline where type=4 or type=260);
 update junction_polyline set time=length/(50/3.6) where polyline_id in (select id from polyline where type=5 or type=261);
 update junction_polyline set time=length/(50/3.6) where polyline_id in (select id from polyline where type=6 or type=262);
+update junction_polyline set time=length/(50/3.6) where polyline_id in (select id from polyline where type=7 or type=263);
+update junction_polyline set time=length/(80/3.6) where polyline_id in (select id from polyline where type=8 or type=264);
+update junction_polyline set time=length/(100/3.6) where polyline_id in (select id from polyline where type=9 or type=265);
 update junction_polyline set time=length/(10/3.6) where polyline_id in (select id from polyline where type=10 or type=266);
+update junction_polyline set time=length/(100/3.6) where polyline_id in (select id from polyline where type=11 or type=267);
+update junction_polyline set time=length/(30/3.6) where polyline_id in (select id from polyline where type=12 or type=268);
 update junction_polyline set time=length/(5/3.6) where polyline_id in (select id from polyline where type=22 or type=278);
 vacuum analyze junction_polyline;
