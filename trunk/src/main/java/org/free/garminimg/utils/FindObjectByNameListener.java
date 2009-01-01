@@ -82,7 +82,7 @@ public class FindObjectByNameListener implements MapListener
         return false;
     }
 
-    public void addPoly(int type, int[] longitudes, int[] latitudes, int nbPoints, Label label, boolean line)
+    public void addPoly(int type, int[] longitudes, int[] latitudes, int nbPoints, Label label, boolean line, boolean direction)
     {
         if(matchLabel(label))
         {

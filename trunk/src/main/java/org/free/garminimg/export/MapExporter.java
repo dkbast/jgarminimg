@@ -95,7 +95,7 @@ public class MapExporter implements MapListener {
         }
     }
 
-    public void addPoly(int type, int[] longitudes, int[] latitudes, int nbPoints, Label label, boolean line) {
+    public void addPoly(int type, int[] longitudes, int[] latitudes, int nbPoints, Label label, boolean line, boolean direction) {
         if (line) {
             if (nbPoints >= 2 && polylineSaver != null)   //don't want to insert invalid polylines...
             {
