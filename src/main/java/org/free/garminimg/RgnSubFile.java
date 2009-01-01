@@ -268,7 +268,7 @@ class RgnSubFile extends ImgSubFile
 
                 type=translateType(type, label, line);
                 if(objectTypeFilter==null || objectTypeFilter.get(type))
-                    listener.addPoly(type, rgnContext.longs, rgnContext.lats, nbPoints, label, line);
+                    listener.addPoly(type, rgnContext.longs, rgnContext.lats, nbPoints, label, line, direction);
             }
             else
             {

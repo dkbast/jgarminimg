@@ -44,8 +44,9 @@ public interface MapListener
      * @param nbPoints   The number of points available.
      * @param label      The label attached to this poly or null if there is none.
      * @param line       True if it's a polyline, false if it's a polygon.
+     * @param direction  True if the polyline is one way
      */
-    void addPoly(int type, int[] longitudes, int[] latitudes, int nbPoints, Label label, boolean line);
+    void addPoly(int type, int[] longitudes, int[] latitudes, int nbPoints, Label label, boolean line, boolean direction);
 
     /**
      * Called each time we start looking into another IMG file

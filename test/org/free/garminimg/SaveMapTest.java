@@ -20,7 +20,6 @@
 package org.free.garminimg;
 
 import junit.framework.TestCase;
-import org.free.garminimg.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,7 +65,7 @@ public class SaveMapTest extends TestCase
         {
         }
 
-        public void addPoly(int type, int[] longitudes, int[] latitudes, int nbPoints, Label label, boolean line)
+        public void addPoly(int type, int[] longitudes, int[] latitudes, int nbPoints, Label label, boolean line, boolean direction)
         {
         }
 

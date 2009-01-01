@@ -43,7 +43,7 @@ public class DiscoverTypesMapListener implements MapListener
         pointTypes.set(type);
     }
 
-    public void addPoly(int type, int[] longitudes, int[] latitudes, int nbPoints, Label label, boolean line)
+    public void addPoly(int type, int[] longitudes, int[] latitudes, int nbPoints, Label label, boolean line, boolean direction)
     {
         if(label==null) return;
         if(line)

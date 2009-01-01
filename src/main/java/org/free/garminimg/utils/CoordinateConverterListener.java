@@ -54,7 +54,7 @@ public class CoordinateConverterListener<COORD> implements MapListener
         listener.addPoint(type, subType, (int)(tempXY.x+0.5), (int)(tempXY.y+0.5), label, indexed);
     }
 
-    public void addPoly(int type, int[] longitudes, int[] latitudes, int nbPoints, Label label, boolean line)
+    public void addPoly(int type, int[] longitudes, int[] latitudes, int nbPoints, Label label, boolean line, boolean direction)
     {
         if(xPoints.length<nbPoints)
         {   //avoid allocating too many objects by re-using this one.
