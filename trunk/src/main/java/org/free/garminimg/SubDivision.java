@@ -19,6 +19,8 @@
  */
 package org.free.garminimg;
 
+import org.pvalsecc.misc.StringUtils;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -209,10 +211,11 @@ public class SubDivision
         {
             out.print("  ");
         }
-        out.println("index="+index+" data="+dataOffset+" lat="+latitudeCenter+" lon="+longitudeCenter+" height(lat)="
-                    +getLatitudeHeight()+" width(long)="+getLongitudeWidth()+" types="+objectTypes+" next="+nextLevel);
+        out.println("index="+index+" data="+dataOffset+" lat="+CoordUtils.toWGS84(latitudeCenter)+" lon="+CoordUtils.toWGS84(longitudeCenter)
+                +" height(lat)=2*"+CoordUtils.toWGS84(getLatitudeHeight())+" width(long)=2*"+CoordUtils.toWGS84(getLongitudeWidth())
+                +" types="+objectTypes+" next="+nextLevel);
 
-        if(level>subFile.getMaxLevel()-2)
+        if(true || level>subFile.getMaxLevel()-2)
         {
             for(int cpt=0; cpt<subDivisions.size(); ++cpt)
             {

@@ -28,15 +28,18 @@ public abstract class Label
 {
     protected ImgFileBag file;
 
+    protected String filename;
+
     protected final int labelOffset;
 
     protected String name=null;
 
     protected boolean initDone=false;
 
-    public Label(ImgFileBag file, int labelOffset)
+    public Label(ImgFileBag file, String filename, int labelOffset)
     {
         this.file=file;
+        this.filename = filename;
         this.labelOffset=labelOffset;
     }
 

@@ -26,21 +26,21 @@ import java.io.IOException;
  */
 public class SimpleLabel extends Label
 {
-    public SimpleLabel(ImgFileBag file, int labelOffset)
+    public SimpleLabel(ImgFileBag file, String filename, int labelOffset)
     {
-        super(file, labelOffset);
+        super(file, filename, labelOffset);
     }
 
     public SimpleLabel(String name)
     {
-        super(null, -1);
+        super(null, null, -1);
         this.name=name;
         this.initDone=true;
     }
 
     protected void init() throws IOException
     {
-        name=file.getLblFile().getLabel(labelOffset);
+        name=file.getLblFile(filename).getLabel(labelOffset);
     }
 
 }

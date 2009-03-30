@@ -26,14 +26,14 @@ import java.io.IOException;
  */
 public class LineInNetLabel extends Label
 {
-    public LineInNetLabel(ImgFileBag file, int labelOffset)
+    public LineInNetLabel(ImgFileBag file, String filename, int labelOffset)
     {
-        super(file, labelOffset);
+        super(file, filename, labelOffset);
     }
 
     protected void init() throws IOException
     {
-        name=getNet().getRoadName(labelOffset, file.getLblFile());
+        name=getNet().getRoadName(labelOffset, file.getLblFile(filename));
     }
 
     public boolean equals(Object o)
@@ -43,6 +43,6 @@ public class LineInNetLabel extends Label
 
     public NetSubFile getNet() throws IOException
     {
-        return file.getNetFile();
+        return file.getNetFile(filename);
     }
 }

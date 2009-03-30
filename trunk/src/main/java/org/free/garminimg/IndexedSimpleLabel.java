@@ -33,9 +33,9 @@ public class IndexedSimpleLabel extends SimpleLabel implements IndexedLabel
 
     private int longitude;
 
-    public IndexedSimpleLabel(ImgFileBag file, int labelOffset, int type, int subType, int longitude, int latitude)
+    public IndexedSimpleLabel(ImgFileBag file, String filename, int labelOffset, int type, int subType, int longitude, int latitude)
     {
-        super(file, labelOffset);
+        super(file, filename, labelOffset);
         this.type=type;
         this.subType=subType;
         this.longitude=longitude;

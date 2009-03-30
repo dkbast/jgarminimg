@@ -36,7 +36,7 @@ public class AccessToLevelsTest extends TestCase
         if(!file.exists()) return;
 
         ImgFileBag imgFile=new ImgFileBag(file, null);
-        TreSubFile tre=imgFile.getTreFile();
+        TreSubFile tre=imgFile.getTreFile("I0665800");
         ImgSubFile.FileContext context=new ImgSubFile.FileContext();
 
         long lockedPos=tre.getAbsolutePosition(tre.getLockedPos());
