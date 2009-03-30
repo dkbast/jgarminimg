@@ -38,15 +38,15 @@ public class ImgFileBag
 
     private int blocSize;
 
-    private LblSubFile lbl;
+    private Map<String, LblSubFile> lbl=new HashMap<String, LblSubFile>();
 
-    private NetSubFile net;
+    private Map<String, NetSubFile> net=new HashMap<String, NetSubFile>();
 
-    private RgnSubFile rgn;
+    private Map<String, RgnSubFile> rgn=new HashMap<String, RgnSubFile>();
 
-    private TreSubFile tre;
+    private Map<String, TreSubFile> tre=new HashMap<String, TreSubFile>();
 
-    private Map<String, ImgSubFile> otherFiles=new HashMap<String, ImgSubFile>();
+    private Map<String, Map<String, ImgSubFile>> otherFiles=new HashMap<String, Map<String, ImgSubFile>>();
 
     private String description;
 
@@ -165,7 +165,7 @@ public class ImgFileBag
                 }
                 else
                 {
-                    subFile=getFile(filetype);
+                    subFile=getFile(filetype, filename);
                     if(subFile==null)
                     {
                         throw new IOException("Unknown sub-file '"+fullFilename+"' with partNumber="+partNumber);
@@ -204,7 +204,7 @@ public class ImgFileBag
     public int guessLowestNbBits(int minLong, int maxLong, int minLat, int maxLat) throws IOException
     {
         initBoundaries();
-        if(tre==null)
+        if(tre.isEmpty())
         {
             if(!containsCoordinates(minLong, maxLong, minLat, maxLat))
                 return 0;
@@ -214,7 +214,11 @@ public class ImgFileBag
         }
         else
         {
-            return tre.guessLowestNbBits();
+            int result=24;
+            for (TreSubFile cur : tre.values()) {
+                result = Math.min(result, cur.guessLowestNbBits());
+            }
+            return result;
         }
     }
 
@@ -242,10 +246,15 @@ public class ImgFileBag
     public long getFullSurface() throws IOException
     {
         initBoundaries();
-        if(tre!=null)
-            return tre.getFullSurface();
-        else
+        if(tre!=null) {
+            long result=0;
+            for (TreSubFile cur : tre.values()) {
+                result+=cur.getFullSurface();
+            }
+            return result;
+        } else {
             return ((long)northBoundary-southBoundary)*((long)eastBoundary-westBoundary);
+        }
     }
 
     private void initBoundaries() throws IOException
@@ -275,19 +284,25 @@ public class ImgFileBag
 
     private void foreachFile(FileVisitor visitor) throws IOException
     {
-        if(lbl!=null)
-            visitor.file(lbl);
-        if(rgn!=null)
-            visitor.file(rgn);
-        if(net!=null)
-            visitor.file(net);
-        if(tre!=null)
-            visitor.file(tre);
+        for (LblSubFile cur : lbl.values()) {
+            visitor.file(cur);
+        }
+        for (RgnSubFile cur : rgn.values()) {
+            visitor.file(cur);
+        }
+        for (NetSubFile cur : net.values()) {
+            visitor.file(cur);
+        }
+        for (TreSubFile cur : tre.values()) {
+            visitor.file(cur);
+        }
 
         for(String subFileName : otherFiles.keySet())
         {
-            ImgSubFile subFile=otherFiles.get(subFileName);
-            visitor.file(subFile);
+            Map<String, ImgSubFile> subFiles=otherFiles.get(subFileName);
+            for (ImgSubFile cur : subFiles.values()) {
+                visitor.file(cur);
+            }
         }
     }
 
@@ -309,70 +324,85 @@ public class ImgFileBag
 
     private void addFile(String filetype, ImgSubFile subFile)
     {
+        final String filename = subFile.getFilename();
+        if(getFile(filetype, filename)!=null) {
+            System.out.println("file "+filename+"."+filetype+" already here!");
+        }
         if("RGN".equals(filetype))
-            rgn=(RgnSubFile)subFile;
+            rgn.put(filename, (RgnSubFile)subFile);
         else if("TRE".equals(filetype))
-            tre=(TreSubFile)subFile;
+            tre.put(filename, (TreSubFile)subFile);
         else if("LBL".equals(filetype))
-            lbl=(LblSubFile)subFile;
+            lbl.put(filename, (LblSubFile)subFile);
         else if("NET".equals(filetype))
-            net=(NetSubFile)subFile;
-        else
-            otherFiles.put(filetype, subFile);
+            net.put(filename, (NetSubFile)subFile);
+        else {
+            Map<String, ImgSubFile> others = otherFiles.get(filetype);
+            if(others==null){
+                others=new HashMap<String, ImgSubFile>();
+                otherFiles.put(filetype, others);
+            }
+            others.put(filename, subFile);
+        }
     }
 
-    private ImgSubFile getFile(String filetype)
+    private ImgSubFile getFile(String filetype, String filename)
     {
         if("RGN".equals(filetype))
-            return rgn;
+            return rgn.get(filename);
         else if("TRE".equals(filetype))
-            return tre;
+            return tre.get(filename);
         else if("LBL".equals(filetype))
-            return lbl;
+            return lbl.get(filename);
         else if("NET".equals(filetype))
-            return net;
-        else
-            return otherFiles.get(filetype);
+            return net.get(filename);
+        else {
+            final Map<String, ImgSubFile> others = otherFiles.get(filetype);
+            return others!=null?others.get(filename):null;
+        }
     }
 
-    public RgnSubFile getRgnFile() throws IOException
+    public RgnSubFile getRgnFile(String filename) throws IOException
     {
         init();
-        return rgn;
+        return rgn.get(filename);
     }
 
-    public TreSubFile getTreFile() throws IOException
+    public TreSubFile getTreFile(String filename) throws IOException
     {
         init();
-        return tre;
+        return tre.get(filename);
     }
 
-    public LblSubFile getLblFile() throws IOException
+    public LblSubFile getLblFile(String filename) throws IOException
     {
         init();
-        return lbl;
+        return lbl.get(filename);
     }
 
-    public NetSubFile getNetFile() throws IOException
+    public NetSubFile getNetFile(String filename) throws IOException
     {
         init();
-        return net;
+        return net.get(filename);
     }
 
     private boolean containsCoordinates(int minLong, int maxLong, int minLat, int maxLat) throws IOException
     {
         initBoundaries();
-        if(tre!=null)
-            return tre.matchesCoordinates(minLong, maxLong, minLat, maxLat);
-        else
+        if(!tre.isEmpty()) {
+            for (TreSubFile cur : tre.values()) {
+                if(cur.matchesCoordinates(minLong, maxLong, minLat, maxLat)) return true;
+            }
+            return false;
+        } else {
             return CoordUtils.matchesCoordinates(westBoundary, eastBoundary, southBoundary, northBoundary, minLong,
                                                  maxLong, minLat, maxLat);
+        }
     }
 
     public boolean containsCoordinate(int longitude, int latitude) throws IOException
     {
-        init();
-        return tre!=null && tre.matchesCoordinate(longitude, latitude);
+        return containsCoordinates(longitude, longitude, latitude, latitude);
     }
 
     public void readMap(int minLong, int maxLong, int minLat, int maxLat, int resolution, int objectKindFilter, BitSet objectTypeFilter, MapListener listener) throws IOException
@@ -381,9 +411,9 @@ public class ImgFileBag
         {
             init();
             listener.startMap(this);
-            if(tre!=null)
-            {
-                tre.readMap(minLong, maxLong, minLat, maxLat, resolution, objectKindFilter, objectTypeFilter, rgn, lbl, net, listener);
+            for (TreSubFile cur : tre.values()) {
+                String filename = cur.getFilename();
+                cur.readMap(minLong, maxLong, minLat, maxLat, resolution, objectKindFilter, objectTypeFilter, rgn.get(filename), lbl.get(filename), net.get(filename), listener);                
             }
         }
     }
@@ -446,9 +476,10 @@ public class ImgFileBag
 
     private Family guessFamily()
     {
-        if(tre!=null)
+        if(!tre.isEmpty())
         {
-            Matcher matcher=familyPattern.matcher(tre.getFilename());
+            String filename=tre.values().iterator().next().getFilename();
+            Matcher matcher=familyPattern.matcher(filename);
             if(matcher.matches())
             {
                 if(matcher.group(1).equals("I"))
@@ -475,36 +506,60 @@ public class ImgFileBag
                     return Family.C_GPS_MAPPER;
                 }
             }
+            System.out.println("Unknown map familly for: "+filename);
         }
-        System.out.println("Unknown map familly for: "+tre.getFilename());
         return Family.UNKNOWN;
     }
 
     public int getNorthBoundary() throws IOException
     {
         initBoundaries();
-        if(tre!=null) return tre.getNorthBoundary();
+        if(!tre.isEmpty()) {
+            int result=0;
+            for (TreSubFile cur : tre.values()) {
+                result = Math.max(result, cur.getNorthBoundary());
+            }
+            return result;
+        }
         return northBoundary;
     }
 
     public int getSouthBoundary() throws IOException
     {
         initBoundaries();
-        if(tre!=null) return tre.getSouthBoundary();
+        if(!tre.isEmpty()) {
+            int result=0xFFFFFF;
+            for (TreSubFile cur : tre.values()) {
+                result = Math.min(result, cur.getSouthBoundary());
+            }
+            return result;
+        }
         return southBoundary;
     }
 
     public int getEastBoundary() throws IOException
     {
         initBoundaries();
-        if(tre!=null) return tre.getEastBoundary();
+        if(!tre.isEmpty()) {
+            int result=0;
+            for (TreSubFile cur : tre.values()) {
+                result = Math.max(result, cur.getEastBoundary());
+            }
+            return result;
+        }
         return eastBoundary;
     }
 
     public int getWestBoundary() throws IOException
     {
         initBoundaries();
-        if(tre!=null) return tre.getWestBoundary();
+        if(!tre.isEmpty()) {
+            int result=0xFFFFFF;
+            for (TreSubFile cur : tre.values()) {
+                result = Math.min(result, cur.getWestBoundary());
+            }
+            return result;
+        }
         return westBoundary;
     }
 

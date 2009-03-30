@@ -118,7 +118,7 @@ public class TreSubFile extends ImgSubFile
             parseTRE7(0x7C, context);
         }
 
-        System.out.println(fileBag.getDescription()+": max="+maxLevel+" maxData="+maxLevelWithData);
+        System.out.println(fileBag.getDescription()+"("+getFilename()+"): max="+maxLevel+" maxData="+maxLevelWithData);
     }
 
     private void parseTRE7(int infoOffset, FileContext context) throws IOException
@@ -437,10 +437,10 @@ public class TreSubFile extends ImgSubFile
     {
         super.printDebug(out);
         initIfNeeded();
-        out.println("  northBoundary="+northBoundary);
-        out.println("  eastBoundary="+eastBoundary);
-        out.println("  southBoundary="+southBoundary);
-        out.println("  westBoundary="+westBoundary);
+        out.println("  northBoundary="+CoordUtils.toWGS84(northBoundary));
+        out.println("  eastBoundary="+CoordUtils.toWGS84(eastBoundary));
+        out.println("  southBoundary="+CoordUtils.toWGS84(southBoundary));
+        out.println("  westBoundary="+CoordUtils.toWGS84(westBoundary));
 
         for(int cpt=0; cpt<subDivisions.size(); ++cpt)
         {
@@ -537,26 +537,29 @@ public class TreSubFile extends ImgSubFile
 
     public void readMap(int minLong, int maxLong, int minLat, int maxLat, int resolution, int objectKindFilter, BitSet objectTypeFilter, RgnSubFile rgn, LblSubFile lbl, NetSubFile net, MapListener listener) throws IOException
     {
-        initIfNeeded();
-        int targetMinLevel;
-        int targetMaxLevel;
-        if(resolution>=0)
+        if(matchesCoordinates(minLong, maxLong, minLat, maxLat))
         {
-            targetMinLevel=guessLevel(resolution);
-            targetMaxLevel=findMaxToDisplay(targetMinLevel);
-        }
-        else
-        {
-            targetMinLevel=minLevel;
-            targetMaxLevel=maxLevel;
-        }
-        RgnContext rgnContext=new RgnContext();
-        for(int level=targetMaxLevel; level>=targetMinLevel; --level)
-        {
-            for(int cpt=0; cpt<subDivisions.size(); ++cpt)
+            initIfNeeded();
+            int targetMinLevel;
+            int targetMaxLevel;
+            if(resolution>=0)
             {
-                SubDivision cur=subDivisions.get(cpt);
-                cur.readMap(minLong, maxLong, minLat, maxLat, level, objectKindFilter, objectTypeFilter, rgn, lbl, net, listener, rgnContext);
+                targetMinLevel=guessLevel(resolution);
+                targetMaxLevel=findMaxToDisplay(targetMinLevel);
+            }
+            else
+            {
+                targetMinLevel=minLevel;
+                targetMaxLevel=maxLevel;
+            }
+            RgnContext rgnContext=new RgnContext();
+            for(int level=targetMaxLevel; level>=targetMinLevel; --level)
+            {
+                for(int cpt=0; cpt<subDivisions.size(); ++cpt)
+                {
+                    SubDivision cur=subDivisions.get(cpt);
+                    cur.readMap(minLong, maxLong, minLat, maxLat, level, objectKindFilter, objectTypeFilter, rgn, lbl, net, listener, rgnContext);
+                }
             }
         }
     }

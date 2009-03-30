@@ -133,11 +133,11 @@ class RgnSubFile extends ImgSubFile
                         int latitude=subDivision.getLongitude(latitudeDelta, 0);
                         if(isPOI)
                         {
-                            label=new IndexedPOILabel(fileBag, lblOffset, type, subType, longitude, latitude);
+                            label=new IndexedPOILabel(fileBag, getFilename(), lblOffset, type, subType, longitude, latitude);
                         }
                         else
                         {
-                            label=new IndexedSimpleLabel(fileBag, lblOffset, type, subType, longitude, latitude);
+                            label=new IndexedSimpleLabel(fileBag, getFilename(), lblOffset, type, subType, longitude, latitude);
                         }
                     }
                     return label;
@@ -251,17 +251,17 @@ class RgnSubFile extends ImgSubFile
                     {
                         if(net!=null)
                         {
-                            label=new LineInNetLabel(fileBag, labelOffset);
+                            label=new LineInNetLabel(fileBag, getFilename(), labelOffset);
                         }
                         else
                         {
                             // I don't know what to do, here...
-                            label=new SimpleLabel(fileBag, labelOffset);
+                            label=new SimpleLabel(fileBag, getFilename(), labelOffset);
                         }
                     }
                     else
                     {
-                        label=new SimpleLabel(fileBag, labelOffset);
+                        label=new SimpleLabel(fileBag, getFilename(), labelOffset);
                     }
                     label=translateLabel(type, label, line);
                 }
@@ -378,11 +378,11 @@ class RgnSubFile extends ImgSubFile
                 {
                     if(isPOI)
                     {
-                        label=new POILabel(fileBag, lblOffset);
+                        label=new POILabel(fileBag, getFilename(), lblOffset);
                     }
                     else
                     {
-                        label=new SimpleLabel(fileBag, lblOffset);
+                        label=new SimpleLabel(fileBag, getFilename(), lblOffset);
                     }
                 }
 

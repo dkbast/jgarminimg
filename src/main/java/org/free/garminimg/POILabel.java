@@ -38,14 +38,14 @@ public class POILabel extends Label
 
     private boolean fullInitDone=false;
 
-    public POILabel(ImgFileBag file, int labelOffset)
+    public POILabel(ImgFileBag file, String filename, int labelOffset)
     {
-        super(file, labelOffset);
+        super(file, filename, labelOffset);
     }
 
     protected void init() throws IOException
     {
-        name=file.getLblFile().getPOIName(labelOffset);
+        name=file.getLblFile(filename).getPOIName(labelOffset);
     }
 
     private synchronized void fullInitIfNeeded() throws IOException
@@ -60,7 +60,7 @@ public class POILabel extends Label
 
     private void fullInit() throws IOException
     {
-        file.getLblFile().getPOI(labelOffset, this);
+        file.getLblFile(filename).getPOI(labelOffset, this);
     }
 
     void setName(String name)
@@ -145,11 +145,11 @@ public class POILabel extends Label
 
     public TreSubFile getTre() throws IOException
     {
-        return file.getTreFile();
+        return file.getTreFile(filename);
     }
 
     public RgnSubFile getRgn() throws IOException
     {
-        return file.getRgnFile();
+        return file.getRgnFile(filename);
     }
 }

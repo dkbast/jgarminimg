@@ -33,9 +33,9 @@ public class IndexedPOILabel extends POILabel implements IndexedLabel
 
     private int longitude;
 
-    public IndexedPOILabel(ImgFileBag file, int labelOffset, int type, int subType, int longitude, int latitude)
+    public IndexedPOILabel(ImgFileBag file, String filename, int labelOffset, int type, int subType, int longitude, int latitude)
     {
-        super(file, labelOffset);
+        super(file, filename, labelOffset);
         this.type=type;
         this.subType=subType;
         this.longitude=longitude;
