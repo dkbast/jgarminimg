@@ -19,8 +19,6 @@
  */
 package org.free.garminimg;
 
-import org.pvalsecc.misc.StringUtils;
-
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
