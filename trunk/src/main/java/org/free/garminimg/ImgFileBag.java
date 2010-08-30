@@ -456,6 +456,7 @@ public class ImgFileBag
         SWISS_TOPO,
         EURO_METRO_GUIDE7,
         EURO_METRO_GUIDE8,
+        USA_METRO_GUIDE7,
         BASE_MAP,
         C_GPS_MAPPER,
         WORLD_MAP,
@@ -491,6 +492,8 @@ public class ImgFileBag
                         return Family.EURO_METRO_GUIDE7;
                     else if(number>=0x04DCC41 && number<=0x04DD727)
                         return Family.EURO_METRO_GUIDE8;
+                    else if(number>=0x04D493C && number<=0x04D4DDC)
+                        return Family.USA_METRO_GUIDE7;
                     else if((number>=0x0002584 && number<=0x00026E7) ||
                             (number>=0x000296F && number<=0x0002BCE) ||
                             (number>=0x0004280 && number<=0x00042E6) ||
@@ -506,7 +509,7 @@ public class ImgFileBag
                     return Family.C_GPS_MAPPER;
                 }
             }
-            System.out.println("Unknown map familly for: "+filename);
+            System.out.println("Unknown map family for: "+filename);
         }
         return Family.UNKNOWN;
     }
